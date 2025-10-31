@@ -1,235 +1,249 @@
-import { PrimeReactProvider } from 'primereact/api';
-import { Card } from 'primereact/card';
-import { InputText } from 'primereact/inputtext';
-import { Button } from 'primereact/button';
-import { Divider } from 'primereact/divider';
-import { Avatar } from 'primereact/avatar';
-import { Tag } from 'primereact/tag';
-import { Toast } from 'primereact/toast';
-import { useRef } from 'react';
-import './App.css'; // Icons
+import { useState } from 'react'
+import { Bell, MapPin, Clock, AlertTriangle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Toaster } from '@/components/ui/toaster'
+import { useToast } from '@/components/ui/use-toast'
+
 
 function App() {
-  const toast = useRef(null);
+  const [email, setEmail] = useState('')
+  const [emailError, setEmailError] = useState('')
+  const { toast } = useToast()
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
+  const handleEmailChange = (e) => {
+    const value = e.target.value
+    setEmail(value)
+
+    if (value && !validateEmail(value)) {
+      setEmailError('Please enter a valid email address')
+    } else {
+      setEmailError('')
+    }
+  }
 
   const handleSubscribe = () => {
-    if (toast.current) {
-      toast.current.show({
-        severity: 'success',
-        summary: 'Successfully Subscribed!',
-        detail: 'You will now receive earthquake alerts via email.',
-        life: 15000
-      });
+    if (!email) {
+      setEmailError('Email address is required')
+      return
     }
-  };
+
+    if (!validateEmail(email)) {
+      setEmailError('Please enter a valid email address')
+      return
+    }
+
+    toast({
+      title: 'Successfully Subscribed!',
+      description: 'You will now receive earthquake alerts via email.',
+      className: 'bg-green-600 border-green-600 text-white',
+    })
+
+    setEmail('')
+    setEmailError('')
+  }
 
   const handleUnsubscribe = () => {
-    if (toast.current) {
-      toast.current.show({
-        severity: 'info',
-        summary: 'Unsubscribed',
-        detail: 'You have been unsubscribed from earthquake alerts.',
-        life: 5000
-      });
+    if (!email) {
+      setEmailError('Email address is required')
+      return
     }
-  };
+
+    if (!validateEmail(email)) {
+      setEmailError('Please enter a valid email address')
+      return
+    }
+
+    toast({
+      title: 'Unsubscribed',
+      description: 'You have been unsubscribed from earthquake alerts.',
+      className: 'bg-red-600 border-red-600 text-white',
+    })
+
+    setEmail('')
+    setEmailError('')
+  }
+
+  const getSeverity = (magnitude) => {
+    if (magnitude >= 6.0) return 'high'
+    if (magnitude >= 5.0) return 'moderate'
+    return 'low'
+  }
 
   const recentAlerts = [
-    {
-      magnitude: 5.2,
-      location: 'Nha Trang',
-      time: '2 hours ago',
-      severity: 'moderate'
-    },
-    {
-      magnitude: 6.8,
-      location: 'Nha Trang',
-      time: '5 hours ago',
-      severity: 'high'
-    },
-    {
-      magnitude: 4.1,
-      location: 'Nha Trang',
-      time: '1 day ago',
-      severity: 'low'
-    },
-    {
-      magnitude: 5.9,
-      location: 'Nha Trang',
-      time: '2 days ago',
-      severity: 'moderate'
-    }
-  ];
+    { magnitude: 5.2, depth: 10, location: 'Nha Trang', time: '2 hours ago' },
+    { magnitude: 6.8, depth: 25, location: 'Nha Trang', time: '5 hours ago' },
+    { magnitude: 4.1, depth: 8, location: 'Nha Trang', time: '1 day ago' },
+    { magnitude: 5.9, depth: 15, location: 'Nha Trang', time: '2 days ago' },
+  ]
 
-  const getSeverityConfig = (severity) => {
-    const configs = {
-      high: { 
-        severity: 'danger', 
-        icon: 'pi-exclamation-triangle', 
-        color: 'bg-red-500/20 text-red-400 border-red-500/30',
-        textColor: 'text-red-400'
-      },
-      moderate: { 
-        severity: 'warning', 
-        icon: 'pi-exclamation-circle', 
-        color: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-        textColor: 'text-amber-400'
-      },
-      low: { 
-        severity: 'info', 
-        icon: 'pi-info-circle', 
-        color: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-        textColor: 'text-blue-400'
-      }
-    };
-    return configs[severity] || { 
-      severity: 'secondary', 
-      icon: 'pi-circle', 
-      color: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
-      textColor: 'text-gray-400'
-    };
-  };
 
   return (
-    <PrimeReactProvider>
-      <Toast ref={toast} position="top-right" />
-      <div className="min-h-screen w-full bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-800">
-        <Card className="h-screen w-full bg-slate-900/95 backdrop-blur-xl border-0 text-white shadow-none rounded-none overflow-hidden">
-          {/* Header Section with enhanced design */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-violet-500/10 to-purple-500/10 rounded-t-2xl"></div>
-            <div className="relative flex items-center gap-4 p-6 pb-4">
-              <Avatar 
-                icon="pi pi-bell" 
-                className="bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-lg"
-                size="large"
-                shape="circle"
+    <div className="min-h-screen w-full bg-slate-900 text-white p-4 md:p-8">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Header Section */}
+        <div className="space-y-3 pb-6 border-b border-slate-700/50">
+          <div className="flex items-center gap-4">
+            <Avatar className="h-14 w-14 bg-linear-to-br from-violet-500 to-purple-600 shadow-lg">
+              <AvatarFallback className="bg-linear-to-br from-violet-500 to-purple-600 text-white">
+                <Bell className="h-7 w-7" />
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <h1 className="text-3xl font-bold bg-linear-to-r from-white to-slate-300 bg-clip-text text-transparent">
+                Earthquake Alerts
+              </h1>
+              <p className="text-slate-200 text-base">
+                Subscribe to receive real-time earthquake notifications
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Subscription Form Section */}
+        <div className="space-y-4">
+          <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/40">
+            <div className="flex items-center gap-2 mb-3">
+              <i className="pi pi-envelope text-violet-400"></i>
+              <label htmlFor="email" className="text-sm font-semibold text-slate-200">
+                Email Notifications
+              </label>
+            </div>
+            <div className="space-y-2 mb-4">
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={handleEmailChange}
+                placeholder="Enter your email address"
+                className={`h-12 bg-slate-900/80 border text-white placeholder:text-slate-300 
+                            focus:shadow-lg rounded-xl transition-all duration-200 hover:border-slate-500 ${emailError
+                    ? 'border-red-500/70 focus:border-red-400 focus:shadow-red-500/20'
+                    : 'border-slate-600/50 focus:border-violet-400 focus:shadow-violet-500/20'
+                  }`}
+                required
               />
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
-                    Earthquake Alerts
-                  </h1>
+              {emailError && (
+                <div className="flex items-center gap-2 text-sm text-red-400 font-medium">
+                  <AlertTriangle className="h-4 w-4" />
+                  <span>{emailError}</span>
                 </div>
-                <p className="text-sm text-slate-400 leading-relaxed">
-                  Subscribe to receive real-time earthquake notifications
-                </p>
-              </div>
+              )}
+            </div>
+            <div className="flex gap-3">
+              <Button
+                onClick={handleSubscribe}
+                disabled={!!emailError && email}
+                className={`flex-1 h-12 text-base font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] ${emailError && email
+                  ? 'bg-gray-600 cursor-not-allowed opacity-50'
+                  : 'bg-linear-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 hover:shadow-violet-500/25'
+                  }`}
+              >
+                Subscribe
+              </Button>
+              <Button
+                onClick={handleUnsubscribe}
+                disabled={!!emailError && email}
+                variant="outline"
+                className={`flex-1 h-12 text-base font-semibold rounded-xl transition-all duration-200 ${emailError && email
+                  ? 'border-gray-600 text-gray-500 cursor-not-allowed opacity-50'
+                  : 'border-2 border-slate-600 text-slate-100 hover:bg-slate-700/30 hover:border-slate-500'
+                  }`}
+              >
+                Unsubscribe
+              </Button>
             </div>
           </div>
+        </div>
 
-          <Divider className="my-2 opacity-30" />
-
-          {/* Enhanced Subscription Form */}
-          <div className="px-6 pb-4">
-            <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/40">
-              <div className="flex items-center gap-2 mb-3">
-                <i className="pi pi-envelope text-violet-400"></i>
-                <label htmlFor="email" className="text-sm font-semibold text-slate-200">
-                  Email Notifications
-                </label>
-              </div>
-              
-              <div className="mb-4">
-                <InputText 
-                  id="email" 
-                  placeholder="Enter your email address"
-                  className="w-full bg-slate-900/80 border border-slate-600/50 text-white placeholder:text-slate-500 
-                            focus:border-violet-400 focus:shadow-lg focus:shadow-violet-500/20 rounded-xl p-4
-                            transition-all duration-200 hover:border-slate-500"
-                />
-              </div>
-              
-              <div className="flex gap-3">
-                <Button 
-                  label="Subscribe" 
-                  icon="pi pi-check"
-                  onClick={handleSubscribe}
-                  className="flex-1 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 
-                            border-0 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200
-                            shadow-lg hover:shadow-xl hover:shadow-violet-500/25 transform hover:scale-[1.02]"
-                />
-                <Button 
-                  label="Unsubscribe" 
-                  icon="pi pi-times"
-                  onClick={handleUnsubscribe}
-                  outlined
-                  className="flex-1 border-2 border-slate-600 text-slate-300 hover:bg-slate-700/30 
-                            hover:border-slate-500 py-3 px-4 rounded-xl transition-all duration-200"
-                />
-              </div>
-            </div>
+        {/* Recent Activity Section */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between pb-4">
+            <h2 className="text-2xl font-semibold flex items-center gap-2">
+              <i className="pi pi-history text-violet-400"></i>
+              Recent Activity
+            </h2>
+            <Badge variant="secondary" className="bg-slate-700/50 text-slate-100 border border-slate-600/30 px-3 py-1">
+              {recentAlerts.length} alerts
+            </Badge>
           </div>
+          <div className="space-y-3">
+            {recentAlerts.map((alert, index) => {
+              const severity = getSeverity(alert.magnitude)
+              const config = {
+                high: {
+                  textColor: 'text-red-500',
+                  labelBg: 'bg-red-600',
+                  labelBorder: 'border-red-500',
+                  borderColor: 'border-red-500'
+                },
+                moderate: {
+                  textColor: 'text-orange-500',
+                  labelBg: 'bg-orange-600',
+                  labelBorder: 'border-orange-500',
+                  borderColor: 'border-orange-500'
+                },
+                low: {
+                  textColor: 'text-blue-500',
+                  labelBg: 'bg-blue-600',
+                  labelBorder: 'border-blue-500',
+                  borderColor: 'border-blue-500'
+                }
+              }[severity] || {
+                textColor: 'text-gray-500',
+                labelBg: 'bg-gray-600',
+                labelBorder: 'border-gray-500',
+                borderColor: 'border-gray-500'
+              }
 
-          <Divider className="my-4 opacity-30" />
-
-          {/* Enhanced Recent Alerts Section */}
-          <div className="px-6 pb-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                <i className="pi pi-history text-violet-400"></i>
-                Recent Activity
-              </h3>
-              <Tag 
-                value={`${recentAlerts.length} alerts`} 
-                className="bg-slate-700/50 text-slate-300 border border-slate-600/30 px-3 py-1 text-xs font-medium rounded-full"
-              />
-            </div>
-            
-            <div className="space-y-3">
-              {recentAlerts.map((alert, index) => {
-                const config = getSeverityConfig(alert.severity);
-                return (
-                  <Card 
-                    key={index}
-                    className="bg-gradient-to-r from-slate-800/60 to-slate-900/60 border border-slate-700/40 
-                              hover:border-slate-600/60 transition-all duration-300 hover:shadow-lg 
-                              hover:shadow-slate-900/50 rounded-xl overflow-hidden group"
-                  >
-                    <div className="flex items-center p-4 gap-4">
-                      {/* Severity Indicator */}
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${config.color} border`}>
-                        <i className={`pi ${config.icon} text-lg`}></i>
+              return (
+                <div
+                  key={index}
+                  className={`bg-linear-to-r from-slate-800/60 to-slate-900/60 border-2 ${config.borderColor}
+                            transition-all duration-300 hover:shadow-lg 
+                            hover:shadow-slate-900/50 rounded-xl overflow-hidden group`}
+                >
+                  <div className="p-5">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-baseline gap-3">
+                        <span className={`font-bold text-3xl ${config.textColor}`}>
+                          M{alert.magnitude}
+                        </span>
+                        <span className={`font-semibold text-xl ${config.textColor}`}>
+                          {alert.depth}km deep
+                        </span>
                       </div>
-                      
-                      {/* Alert Details */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 mb-1">
-                          <span className="text-white font-bold text-base group-hover:text-violet-300 transition-colors">
-                            M{alert.magnitude}
-                          </span>
-                          <Tag 
-                            value={alert.severity.toUpperCase()} 
-                            severity={config.severity}
-                            className="px-2 py-0.5 text-xs font-semibold rounded-md"
-                          />
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <i className="pi pi-map-marker text-slate-500 text-xs"></i>
-                          <span className="text-slate-400 text-sm font-medium">{alert.location}</span>
-                        </div>
+                      <span className={`${config.labelBg} text-white px-3 py-1.5 text-xs font-bold rounded-lg border-2 ${config.labelBorder}`}>
+                        {severity.toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-200">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4" />
+                        <span className="font-semibold text-base">{alert.location}</span>
                       </div>
-                      
-                      {/* Timestamp */}
-                      <div className="text-right">
-                        <div className="flex items-center gap-1 text-slate-500 text-xs">
-                          <i className="pi pi-clock"></i>
-                          <span>{alert.time}</span>
-                        </div>
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4" />
+                        <span className="text-sm">{alert.time}</span>
                       </div>
                     </div>
-                    
-                    {/* Subtle bottom border for severity */}
-                    <div className={`h-1 ${config.color.split(' ')[0]} opacity-60`}></div>
-                  </Card>
-                );
-              })}
-            </div>
+                  </div>
+                </div>
+              )
+            })}
           </div>
-        </Card>
+        </div>
       </div>
-    </PrimeReactProvider>
-  );
+      <Toaster />
+    </div>
+  )
 }
 
-export default App;
+export default App

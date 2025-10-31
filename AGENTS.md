@@ -30,8 +30,11 @@ This is a modern React application built with Vite as the build tool. The projec
 
 ### UI Component Library
 
-- **PrimeReact:** Latest - Comprehensive React UI component library with rich components
-- **PrimeIcons:** Latest - Icon library that pairs with PrimeReact components
+- **shadcn/ui** - Modern React component library built on Radix UI primitives
+- **Radix UI** - Unstyled, accessible component primitives
+- **Lucide React** - Beautiful & consistent icon library
+- **Tailwind CSS:** ^4.1.16 - Utility-first CSS framework
+- **@tailwindcss/vite:** ^4.1.16 - Tailwind CSS Vite plugin
 
 ### TypeScript Support (Development)
 
@@ -72,7 +75,8 @@ ccdd/
 3. **Code Style**: Follow ESLint configuration already set up in the project
 4. **File Extensions**: Use `.jsx` for React components, `.js` for utility files
 5. **Module System**: Project uses ES modules (`"type": "module"` in package.json)
-6. **UI Components**: PrimeReact is available for rich UI components - wrap components with PrimeReactProvider
+6. **UI Components**: shadcn/ui components are available in `src/components/ui/` - use the `@/` alias to import
+7. **Styling**: Uses Tailwind CSS with minimal custom styles
 
 ### Key Considerations:
 
@@ -80,7 +84,8 @@ ccdd/
 - **Development Server**: Vite provides fast HMR (Hot Module Replacement)
 - **Linting**: Code should pass ESLint checks before committing
 - **TypeScript**: While not fully configured, TypeScript definitions are available for development
-- **PrimeReact**: UI component library is configured - use PrimeReactProvider wrapper in App.jsx
+- **shadcn/ui**: Component library built on Radix UI - components are in `src/components/ui/`
+- **Path Aliases**: Use `@/` to reference the `src` directory (e.g., `@/components/ui/button`)
 
 ### Common Tasks:
 
@@ -114,4 +119,5 @@ When expanding this project, consider:
 - Setting up testing framework (Jest, Vitest, Testing Library)
 - Adding TypeScript configuration for better type safety
 - Implementing build optimization and PWA features
-- Exploring advanced PrimeReact themes and customization
+- Adding more shadcn/ui components as needed
+- Customizing the design system with Tailwind CSS theme

@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@theme {
+  /* Light mode - Purple theme */
+  --color-background: 270 100% 98%;
+  --color-foreground: 270 20% 10%;
+  --color-card: 0 0% 100%;
+  --color-card-foreground: 270 20% 10%;
+  --color-popover: 0 0% 100%;
+  --color-popover-foreground: 270 20% 10%;
+  --color-primary: 266 80% 60%;
+  --color-primary-foreground: 0 0% 100%;
+  --color-secondary: 270 50% 95%;
+  --color-secondary-foreground: 270 20% 10%;
+  --color-muted: 270 30% 96%;
+  --color-muted-foreground: 270 10% 45%;
+  --color-accent: 270 50% 95%;
+  --color-accent-foreground: 270 20% 10%;
+  --color-destructive: 0 84% 60%;
+  --color-destructive-foreground: 0 0% 100%;
+  --color-border: 270 20% 90%;
+  --color-input: 270 20% 85%;
+  --color-ring: 266 80% 60%;
+  --radius: 0.75rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  @theme {
+    /* Dark mode - Deep purple/slate theme */
+    --color-background: 222 47% 11%;
+    --color-foreground: 210 40% 98%;
+    --color-card: 222 47% 15%;
+    --color-card-foreground: 210 40% 98%;
+    --color-popover: 222 47% 15%;
+    --color-popover-foreground: 210 40% 98%;
+    --color-primary: 266 80% 60%;
+    --color-primary-foreground: 0 0% 100%;
+    --color-secondary: 217 33% 20%;
+    --color-secondary-foreground: 210 40% 98%;
+    --color-muted: 217 33% 17%;
+    --color-muted-foreground: 215 20% 65%;
+    --color-accent: 217 33% 20%;
+    --color-accent-foreground: 210 40% 98%;
+    --color-destructive: 0 63% 45%;
+    --color-destructive-foreground: 210 40% 98%;
+    --color-border: 217 33% 22%;
+    --color-input: 217 33% 20%;
+    --color-ring: 266 80% 60%;
+  }
+}
+
+body {
+  background: linear-gradient(135deg, hsl(var(--color-background)) 0%, hsl(270 60% 95%) 100%);
+  color: hsl(var(--color-foreground));
+  min-height: 100vh;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: linear-gradient(135deg, hsl(222 47% 11%) 0%, hsl(266 40% 18%) 100%);
+  }
+}
