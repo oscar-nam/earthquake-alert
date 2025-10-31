@@ -29,7 +29,7 @@ function App() {
     }
   }
 
-  const handleSubscribe = () => {
+  const handleSubscribe = async () => {
     if (!email) {
       setEmailError('Email address is required')
       return
@@ -40,17 +40,37 @@ function App() {
       return
     }
 
-    toast({
-      title: 'Successfully Subscribed!',
-      description: 'You will now receive earthquake alerts via email.',
-      className: 'bg-green-600 border-green-600 text-white',
-    })
+    try {
+      const response = await fetch('https://ccddapi.vudo.click/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
 
-    setEmail('')
-    setEmailError('')
+      if (!response.ok) {
+        throw new Error('Failed to subscribe')
+      }
+
+      toast({
+        title: 'Successfully Subscribed!',
+        description: 'You will now receive earthquake alerts via email.',
+        className: 'bg-green-600 border-green-600 text-white',
+      })
+
+      setEmail('')
+      setEmailError('')
+    } catch (error) {
+      toast({
+        title: 'Subscription Failed',
+        description: 'There was an error subscribing. Please try again.',
+        className: 'bg-red-600 border-red-600 text-white',
+      })
+    }
   }
 
-  const handleUnsubscribe = () => {
+  const handleUnsubscribe = async () => {
     if (!email) {
       setEmailError('Email address is required')
       return
@@ -61,14 +81,34 @@ function App() {
       return
     }
 
-    toast({
-      title: 'Unsubscribed',
-      description: 'You have been unsubscribed from earthquake alerts.',
-      className: 'bg-red-600 border-red-600 text-white',
-    })
+    try {
+      const response = await fetch('https://ccddapi.vudo.click/unsubscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
 
-    setEmail('')
-    setEmailError('')
+      if (!response.ok) {
+        throw new Error('Failed to unsubscribe')
+      }
+
+      toast({
+        title: 'Unsubscribed',
+        description: 'You have been unsubscribed from earthquake alerts.',
+        className: 'bg-red-600 border-red-600 text-white',
+      })
+
+      setEmail('')
+      setEmailError('')
+    } catch (error) {
+      toast({
+        title: 'Unsubscribe Failed',
+        description: 'There was an error unsubscribing. Please try again.',
+        className: 'bg-red-600 border-red-600 text-white',
+      })
+    }
   }
 
   const getSeverity = (magnitude) => {
@@ -78,10 +118,10 @@ function App() {
   }
 
   const recentAlerts = [
-    { magnitude: 5.2, depth: 10, location: 'Nha Trang', time: '2 hours ago' },
-    { magnitude: 6.8, depth: 25, location: 'Nha Trang', time: '5 hours ago' },
-    { magnitude: 4.1, depth: 8, location: 'Nha Trang', time: '1 day ago' },
-    { magnitude: 5.9, depth: 15, location: 'Nha Trang', time: '2 days ago' },
+    { magnitude: 5.2, location: 'Nha Trang', time: '2 hours ago' },
+    { magnitude: 6.8, location: 'Nha Trang', time: '5 hours ago' },
+    { magnitude: 4.1, location: 'Nha Trang', time: '1 day ago' },
+    { magnitude: 5.9, location: 'Nha Trang', time: '2 days ago' },
   ]
 
 
@@ -215,9 +255,6 @@ function App() {
                       <div className="flex items-baseline gap-3">
                         <span className={`font-bold text-3xl ${config.textColor}`}>
                           {alert.magnitude}
-                        </span>
-                        <span className={`font-semibold text-xl ${config.textColor}`}>
-                          {alert.depth}km
                         </span>
                       </div>
                       <span className={`${config.labelBg} text-white px-3 py-1.5 text-xs font-bold rounded-lg border-2 ${config.labelBorder}`}>
