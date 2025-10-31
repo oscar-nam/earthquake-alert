@@ -214,7 +214,7 @@ function App() {
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-baseline gap-3">
                         <span className={`font-bold text-3xl ${config.textColor}`}>
-                          M{alert.magnitude}
+                          {alert.magnitude}
                         </span>
                         <span className={`font-semibold text-xl ${config.textColor}`}>
                           {alert.depth}km deep
