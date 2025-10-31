@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Bell, MapPin, Clock, AlertTriangle } from 'lucide-react'
+import { Bell, MapPin, Clock, AlertTriangle, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -11,6 +11,7 @@ import { useToast } from '@/components/ui/use-toast'
 function App() {
   const [email, setEmail] = useState('')
   const [emailError, setEmailError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
 
   const validateEmail = (email) => {
@@ -40,6 +41,7 @@ function App() {
       return
     }
 
+    setIsLoading(true)
     try {
       const response = await fetch('https://ccddapi.vudo.click/subscribe', {
         method: 'POST',
@@ -67,6 +69,8 @@ function App() {
         description: 'There was an error subscribing. Please try again.',
         className: 'bg-red-600 border-red-600 text-white',
       })
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -81,6 +85,7 @@ function App() {
       return
     }
 
+    setIsLoading(true)
     try {
       const response = await fetch('https://ccddapi.vudo.click/unsubscribe', {
         method: 'POST',
@@ -108,6 +113,8 @@ function App() {
         description: 'There was an error unsubscribing. Please try again.',
         className: 'bg-red-600 border-red-600 text-white',
       })
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -180,24 +187,38 @@ function App() {
             <div className="flex gap-3">
               <Button
                 onClick={handleSubscribe}
-                disabled={!!emailError && email}
-                className={`flex-1 h-12 text-base font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] ${emailError && email
+                disabled={!!emailError && email || isLoading}
+                className={`flex-1 h-12 text-base font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] ${emailError && email || isLoading
                   ? 'bg-gray-600 cursor-not-allowed opacity-50'
                   : 'bg-linear-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 hover:shadow-violet-500/25'
                   }`}
               >
-                Subscribe
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  'Subscribe'
+                )}
               </Button>
               <Button
                 onClick={handleUnsubscribe}
-                disabled={!!emailError && email}
+                disabled={!!emailError && email || isLoading}
                 variant="outline"
-                className={`flex-1 h-12 text-base font-semibold rounded-xl transition-all duration-200 ${emailError && email
+                className={`flex-1 h-12 text-base font-semibold rounded-xl transition-all duration-200 ${emailError && email || isLoading
                   ? 'border-gray-600 text-gray-500 cursor-not-allowed opacity-50'
                   : 'border-2 border-slate-600 text-slate-100 hover:bg-slate-700/30 hover:border-slate-500'
                   }`}
               >
-                Unsubscribe
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  'Unsubscribe'
+                )}
               </Button>
             </div>
           </div>
