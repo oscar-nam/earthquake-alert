@@ -217,7 +217,7 @@ function App() {
                           {alert.magnitude}
                         </span>
                         <span className={`font-semibold text-xl ${config.textColor}`}>
-                          {alert.depth}km deep
+                          {alert.depth}km
                         </span>
                       </div>
                       <span className={`${config.labelBg} text-white px-3 py-1.5 text-xs font-bold rounded-lg border-2 ${config.labelBorder}`}>
